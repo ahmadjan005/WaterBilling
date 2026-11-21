@@ -1,14 +1,20 @@
 name: Build APK
 on:
   push:
-    paths: ['WaterBilling.zip']
+    paths: ['**.zip']
   workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: unzip -o WaterBilling.zip
+        with:
+          fetch-depth: 0
+      - name: Unzip latest uploaded zip
+        run: |
+          ZIP="$(git log -1 --name-only --pretty=format: -- '*.zip' | grep -v '^$' | head -1)"
+          echo "Using: $ZIP"
+          unzip -o "$ZIP"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
